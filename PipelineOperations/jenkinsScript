@@ -1,0 +1,24 @@
+#!/bin/bash
+echo ""
+echo "... Building SpringBootApp ..."
+cd SpringBootApp
+mvn clean install
+
+mv target/SpringBootApp.war ../PipelineOperations
+
+echo ""
+echo "... Deploying SpringBootApp ..."
+
+cd ../PipelineOperations
+sudo docker build . -t tomcatserver
+
+CONTAINER=tomcatserver
+RUNNING=$(sudo docker inspect --format="{{ .State.Running }}" $CONTAINER 2> /dev/null)
+
+if [ $? -eq 1 ]; then
+	echo "'$CONTAINER' does not exist"
+else
+	sudo docker rm -f $CONTAINER
+fi
+
+sudo docker run -d -p 8081:8080 --name $CONTAINER $CONTAINER
