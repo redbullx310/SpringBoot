@@ -1,0 +1,38 @@
+node {
+	// Name of docker container
+    def CONTAINER = "tomcatserver"
+    
+    // This stage builds the maven application and the docker file
+    stage('Build') {
+        def mvnHome = tool name: 'maven3', type: 'maven'
+        def mvnCmd = "${mvnHome}/bin/mvn"
+        
+        git "https://github.com/redbullx310/SpringBoot.git"
+        
+        dir("./SpringBootApp") {
+            sh "${mvnCmd} clean package"
+        }
+        
+        dir("./PipelineOperations") {
+            sh "sudo docker build -t $CONTAINER ."
+        }
+    }
+    
+    // This stage deploys the war file to the tomcat container
+    stage('Deploy') {
+        sh "mv ./SpringBootApp/target/SpringBootApp.war ./PipelineOperations"
+        
+        def RUNNING = sh (
+            script: "sudo docker inspect --format='{{ .State.Running }}' $CONTAINER 2> /dev/null",
+            returnStatus: true
+        )
+        
+        if(RUNNING == 1) {
+            echo "'$CONTAINER' does not exist"
+        } else {
+            sh "sudo docker rm -f $CONTAINER"
+        }
+        
+        sh "sudo docker run -d -p 8081:8080 --name $CONTAINER $CONTAINER"
+    }
+}
