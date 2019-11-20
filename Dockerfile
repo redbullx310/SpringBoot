@@ -1,4 +1,3 @@
-FROM tomcat:8.0-alpine
-COPY SpringBootApp.war /usr/local/tomcat/webapps/
+FROM jboss/wildfly
+ADD SpringBootApp.war /opt/jboss/wildfly/standalone/deployments/
 EXPOSE 8080
-CMD ["catalina.sh", "run"]
