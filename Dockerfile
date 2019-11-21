@@ -1,3 +1,5 @@
-FROM jboss/wildfly
-ADD SpringBootApp.war /opt/jboss/wildfly/standalone/deployments/
-EXPOSE 8080
+FROM openjdk:8-jdk-alpine
+VOLUME /tmp
+COPY SpringBootTest-1.0.0.jar /tmp/SpringBootTest-1.0.0.jar
+WORKDIR /tmp
+CMD ["java","-jar","SpringBootTest-1.0.0.jar"]
