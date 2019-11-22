@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine
 VOLUME /tmp
-COPY SpringBootTest-1.0.0.jar /tmp/SpringBootTest-1.0.0.jar
+COPY independent-micro-service-0.0.1-SNAPSHOT.jar /tmp/independent-micro-service-0.0.1-SNAPSHOT.jar
 WORKDIR /tmp
 EXPOSE 8080
-CMD ["java","-jar","SpringBootTest-1.0.0.jar"]
+CMD ["java","-jar","independent-micro-service-0.0.1-SNAPSHOT.jar"]
